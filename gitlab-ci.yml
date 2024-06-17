@@ -1,0 +1,18 @@
+image: maven:3.8.5-openjdk-11-slim
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - mvn clean package -DskipTests
+
+test:
+  stage: test
+  script:
+    - mvn test
+  artifacts:
+    paths:
+      - target/surefire-reports/
