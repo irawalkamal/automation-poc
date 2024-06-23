@@ -11,7 +11,7 @@ public class TestClass1 extends BaseTest {
     @Test
     public void testMethod1() {
         try {
-            WebElement searchBox = getElement("searchBox");
+            WebElement searchBox = getElement("txtBox_SearchBox");
             ExtentManager.logTestStep("Step 1", "Entering data in Search Box");
             searchBox.sendKeys("Selenium", Keys.ENTER);
             ExtentManager.logTestStep("Step 2", "Verifying outcome");
@@ -25,11 +25,25 @@ public class TestClass1 extends BaseTest {
     public void testMethod2() {
         try {
             ExtentManager.logTestStep("Step 1", "Entering data in Search Box");
-            getElement("searchBox").sendKeys("Automation",Keys.ENTER);
+            getElement("txtBox_SearchBox").sendKeys("Automation",Keys.ENTER);
             System.out.println(driver.getTitle());
             ExtentManager.logTestStep("Step 2", "Verifying outcome");
+            getElement("kamal");
         } catch (Exception e) {
-            e.printStackTrace();
+            ExtentManager.handleException(e);
+        }
+    }
+
+    @Test
+    public void testMethod3() {
+        try {
+            ExtentManager.logTestStep("Step 1", "Entering data in Search Box");
+            getElement("txtBox_SearchBox").sendKeys("Hello World",Keys.ENTER);
+            System.out.println(driver.getTitle());
+            ExtentManager.logTestStep("Step 2", "Verifying outcome");
+            getElement("kamal");
+        } catch (Exception e) {
+            ExtentManager.handleException(e);
         }
     }
 }

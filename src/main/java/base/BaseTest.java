@@ -15,8 +15,6 @@ import org.testng.annotations.*;
 import reporting.ExtentManager;
 import utils.ConfigReader;
 import utils.FileManager;
-
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,19 +28,22 @@ public class BaseTest {
     protected ExtentTest logger;
 
     @BeforeSuite
-    public void setUp() throws IOException {
+    public void setUp(){
         FileManager.createDailyFolders();
     }
 
     @BeforeClass
-    public void getDBDetails()
-    {
-        locators = LocatorsDAO.getLocators(this.getClass().getSimpleName());
+    public void getDBDetails() {
+        // Retrieve locators for the current test class
+        Map<String, String> locators = LocatorsDAO.getLocators(this.getClass().getSimpleName());
 
         if (locators.isEmpty()) {
             throw new RuntimeException("Locators map is empty or null!");
         }
+        this.locators = locators;
+
     }
+
     @BeforeMethod
     public void setup(){
         String browser = ConfigReader.getProperty("browser");
@@ -75,12 +76,14 @@ public class BaseTest {
 
     @BeforeMethod
     public void startTest(Method method) {
-        String testName = method.getName();
+        String testMethodName = method.getName();
+        String testName = LocatorsDAO.getTestMethodName(testMethodName);
         logger = ExtentManager.createTest(testName);
     }
 
 
     protected WebElement getElement(String elementName) {
+
         String locator = locators.get(elementName);
         if (locator == null) {
             throw new RuntimeException("Locator not found for element: " + elementName);

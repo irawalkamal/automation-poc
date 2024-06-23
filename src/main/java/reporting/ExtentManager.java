@@ -37,7 +37,7 @@ public class ExtentManager {
         driver = webDriver;
     }
 
-    public static synchronized ExtentTest createTest(String testName) {
+    public static synchronized ExtentTest  createTest(String testName) {
         ExtentTest test = extent.createTest(testName);
         extentTest.set(test);
         return test;
@@ -64,6 +64,27 @@ public class ExtentManager {
         }
     }
 
+    public static synchronized void logTestFailure(String stepName, String errorMessage) {
+        ExtentTest test = extentTest.get();
+        if (test == null) {
+            throw new IllegalStateException("ExtentTest has not been initialized. Call setExtentTest before logging steps.");
+        }
+
+        String screenshotPath = captureScreenshot(stepName + "_Failure");
+        String stepDetails = "FAIL: " + stepName + ": " + errorMessage;
+
+        if (!screenshotPath.isEmpty()) {
+            test.fail("<a href='../../" + screenshotPath + "'>" + stepDetails + "</a>");
+        } else {
+            test.fail(stepDetails);
+        }
+    }
+
+    public static synchronized void handleException(Exception e) {
+        String stepName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        logTestFailure(stepName, e.getMessage());
+        throw new RuntimeException(e);
+    }
     public static synchronized void flushReport() {
         if (extent != null) {
             extent.flush();
